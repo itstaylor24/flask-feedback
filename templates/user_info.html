@@ -1,5 +1,5 @@
-{% extends 'base.html' %} {% block title %}{{ user.full_name }}{% endblock %}}
-{% block content %}
+{% extends 'base.html' %} {% block title %}{{ user.first_name
+}}{{user.last_name}}{% endblock %} {% block content %}
 
 <div class="row">
   <div class="col-sm-10 col-12">
@@ -7,6 +7,8 @@
 
     <ul>
       {% for feedback in user.feedback %}
+      <!-- for each submission of feedback we create an li displaying that feedback and the content of 
+    that feedback -->
 
       <li>
         {{ feedback.title }}
@@ -21,6 +23,7 @@
           formaction="/feedback/{{ feedback.id }}/update"
         >
           Edit
+          <!-- this button when clicked will direct to a url that allows for updating -->
         </button>
         <button
           class="btn btn-danger"
@@ -28,6 +31,8 @@
           formaction="/feedback/{{ feedback.id }}/delete"
         >
           Delete
+          <!-- This button will call the delete feedback view function which
+        deletes feedback and redirects to the user info route -->
         </button>
       </form>
 

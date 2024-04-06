@@ -1,17 +1,21 @@
-from flask import Flask, render_template, redirect, session, flash
+from flask import Flask, render_template, redirect, session, flash, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Feedback
 from forms import UserForm, FeedbackForm, LoginForm, DeleteForm
 from werkzeug.exceptions import Unauthorized
-
+# don't fully understand this line above
 from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///flask_feedback"
+# line above connects app to postgres db
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+# setting this to false creates less space in memory
 app.config["SQLALCHEMY_ECHO"] = True
+# This shows the pure sql for the SQL objects
 app.config["SECRET_KEY"] = "abc123"
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+
 
 toolbar = DebugToolbarExtension(app)
 
@@ -23,8 +27,9 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 @app.route('/', methods = ['GET']) 
-def show_redirect_register():
-    return redirect('/register')
+def show_homepage():
+    return redirect(url_for('register_user'))
+# root route redirects to register
 
 
 
@@ -33,6 +38,7 @@ def register_user():
     if "username" in session:
         return redirect(f"/users/{session['username']}")
     form = UserForm()
+    # this form data will be committed to the sequel alchemy session
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -47,7 +53,7 @@ def register_user():
             form.username.errors.append('Username not available. Please choose a different one')
             return render_template('register.html', form=form)
         session['username'] = new_user.username
-        flash('Account Created!')
+        flash('You have successfully created an account!')
         return redirect(f'/users/{new_user.username}')
     return render_template('register.html', form=form)
 
